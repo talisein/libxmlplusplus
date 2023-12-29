@@ -22,6 +22,14 @@ jobs:
       - name: Configure
         run: meson setup --warnlevel 3 --werror -Dlibxml2_cmake:werror=false -Dmaintainer-mode=false _build
 
+      - name: capture shared meson configure
+        uses: actions/upload-artifact@v4
+        with:
+          name: shared libxml2 configure
+          path: |
+            _build/subprojects/libxml2_cmake/meson.build
+            _build/subprojects/libxml2_cmake/__CMake_build/cmake_trace.txt
+
       - name: Compile
         run: ninja -C _build
 
@@ -31,11 +39,13 @@ jobs:
       - name: Configure static
         run: meson setup --warnlevel 3 --werror -Dlibxml2_cmake:werror=false --default-library static -Dmaintainer-mode=false _build_static
 
-      - name: capture meson.build
+      - name: capture static meson configure
         uses: actions/upload-artifact@v4
         with:
-          name: libxml2-meson.build
-          path: _build_static/subprojects/libxml2_cmake/meson.build
+          name: static libxml2 configure
+          path: |
+            _build_static/subprojects/libxml2_cmake/meson.build
+            _build_static/subprojects/libxml2_cmake/__CMake_build/cmake_trace.txt
 
       - name: Compile static
         run: ninja -C _build_static
@@ -47,5 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
-          name: libxml2-meson.build
-          path: _build_static/meson-logs/meson-log.txt
+          name: libxml2-meson-logs
+          path: |
+            _build/meson-logs/meson-log.txt
+            _build_static/meson-logs/meson-log.txt
