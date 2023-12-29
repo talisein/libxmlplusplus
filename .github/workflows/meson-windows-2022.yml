@@ -31,8 +31,21 @@ jobs:
       - name: Configure static
         run: meson setup --warnlevel 3 --werror -Dlibxml2_cmake:werror=false --default-library static -Dmaintainer-mode=false _build_static
 
+      - name: capture meson.build
+        uses: actions/upload-artifact@v4
+        with:
+          name: libxml2-meson.build
+          path: _build_static/subprojects/libxml2_cmake/meson.build
+
       - name: Compile static
         run: ninja -C _build_static
 
       - name: Test static
         run: meson test -C _build_static
+
+      - name: capture meson log
+        uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: libxml2-meson.build
+          path: _build_static/meson-logs/meson-log.txt

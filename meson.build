@@ -107,6 +107,8 @@ install_pkgconfigdir = install_libdir / 'pkgconfig'
 
 xml2_min_ver = '2.7.7'
 xml2_req = '>= @0@'.format(xml2_min_ver)
+
+
 xml2_dep = dependency(
   ['libxml-2.0', 'LibXml2'],
   version: xml2_req,
@@ -114,7 +116,7 @@ xml2_dep = dependency(
 )
 
 # Setup CMake subproject for use, if needed
-if not xml2_dep.found()
+if not xml2_dep.found() or get_option('wrap_mode') == 'forcefallback'
   cmake = import('cmake')
   opt_var = cmake.subproject_options()
   build_shared = get_option('default_library') != 'static'
@@ -156,6 +158,7 @@ if not xml2_dep.found()
     'LIBXML2_WITH_ZLIB': zlib_dep.found(),
   })
   xml2_sp = cmake.subproject('libxml2_cmake', options: opt_var)
+  message(xml2_sp.target_list())
   xml2_dep = xml2_sp.dependency('LibXml2')
 endif
 
